@@ -12,7 +12,6 @@
     --purple-light: #C4B5FD;
     --blue: #60A5FA;
     --blue-light: #B9D9DC;
-    --white: #ffffff;
     --bg: #F5F3FF;
     --glass: rgba(255,255,255,0.7);
     --glass-border: rgba(167,139,250,0.25);
@@ -21,142 +20,215 @@
     --shadow: 0 8px 32px rgba(124,58,237,0.10);
     --shadow-lg: 0 20px 60px rgba(124,58,237,0.15);
   }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
+
+  html, body {
+    height: 100%;
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
   }
+
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     background:
       radial-gradient(ellipse 60% 50% at 10% 20%, rgba(124,58,237,0.10) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(96,165,250,0.10) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(196,181,253,0.06) 0%, transparent 70%);
+      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(96,165,250,0.10) 0%, transparent 70%);
     z-index: 0;
     pointer-events: none;
   }
+
+  /* HEADER — fixed height */
   header {
-    position: relative;
-    z-index: 10;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
     background: var(--glass);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-border);
     padding: 0 24px;
-    height: 64px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 2px 20px rgba(124,58,237,0.08);
   }
+
   .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .logo-icon {
-    width: 38px; height: 38px;
+    width: 36px; height: 36px;
     background: linear-gradient(135deg, var(--purple), var(--blue));
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 12px rgba(124,58,237,0.35);
+    flex-shrink: 0;
   }
-  .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--text); }
+  .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text); }
   .logo-text span { background: linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .header-links { display: flex; align-items: center; gap: 8px; }
   .header-btn {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 14px;
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px;
     background: rgba(124,58,237,0.08);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500;
-    color: var(--purple); text-decoration: none; cursor: pointer;
-    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 500;
+    color: var(--purple); text-decoration: none;
+    transition: all 0.2s; white-space: nowrap;
   }
-  .header-btn:hover { background: rgba(124,58,237,0.15); transform: translateY(-1px); }
-  .main {
-    position: relative; z-index: 1;
-    flex: 1; display: flex; flex-direction: column;
-    max-width: 860px; width: 100%;
-    margin: 0 auto; padding: 0 16px;
-    height: calc(100vh - 64px);
+  .header-btn:hover { background: rgba(124,58,237,0.15); }
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; font-size: 0.7rem; font-weight: 500; color: #059669; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* MAIN CONTAINER — fills screen below header */
+  .app {
+    position: fixed;
+    top: 60px;
+    left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
   }
-  .welcome { padding: 24px 0 16px; text-align: center; flex-shrink: 0; }
-  .welcome h1 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+
+  .inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* WELCOME */
+  .welcome {
+    text-align: center;
+    padding: 18px 0 8px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+  .welcome.hidden { display: none; }
+  .welcome h1 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--text); }
   .welcome h1 span { background: linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .welcome p { font-size: 0.875rem; color: var(--text-muted); margin-top: 6px; }
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 14px; flex-shrink: 0; }
+  .welcome p { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
+
+  /* CHIPS */
+  .chips-section { flex-shrink: 0; padding: 8px 0 4px; }
+  .chips-label { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
+  .chips-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .chips-scroll::-webkit-scrollbar { display: none; }
   .chip {
-    padding: 6px 14px;
-    background: var(--glass); backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border); border-radius: 20px;
-    font-size: 0.78rem; font-weight: 500; color: var(--purple);
+    flex-shrink: 0;
+    padding: 6px 13px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    font-size: 0.76rem; font-weight: 500; color: var(--purple);
     cursor: pointer; transition: all 0.2s;
     display: flex; align-items: center; gap: 5px; white-space: nowrap;
   }
-  .chip:hover { background: rgba(124,58,237,0.1); border-color: var(--purple-mid); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(124,58,237,0.12); }
-  .chat-wrap { flex: 1; overflow-y: auto; padding: 16px 0; scroll-behavior: smooth; min-height: 0; }
+  .chip:hover { background: rgba(124,58,237,0.1); border-color: var(--purple-mid); transform: translateY(-2px); }
+  .chip:active { transform: scale(0.97); }
+
+  /* CHAT MESSAGES — this is the scrollable area */
+  .chat-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+    min-height: 0;
+  }
   .chat-wrap::-webkit-scrollbar { width: 4px; }
   .chat-wrap::-webkit-scrollbar-track { background: transparent; }
   .chat-wrap::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 2px; }
-  .message { display: flex; gap: 10px; margin-bottom: 16px; animation: msgIn 0.3s ease; }
-  @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .message { display: flex; gap: 10px; margin-bottom: 14px; animation: msgIn 0.3s ease; }
+  @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
   .message.user { flex-direction: row-reverse; }
-  .avatar { width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; }
-  .avatar.ai { background: linear-gradient(135deg, var(--purple), var(--blue)); box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
-  .avatar.user-av { background: linear-gradient(135deg, var(--blue), var(--blue-light)); box-shadow: 0 4px 12px rgba(96,165,250,0.3); font-family: 'Syne', sans-serif; color: white; font-size: 0.75rem; }
-  .bubble { max-width: 72%; padding: 12px 16px; border-radius: 16px; font-size: 0.875rem; line-height: 1.6; color: var(--text); }
+
+  .avatar { width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .avatar.ai { background: linear-gradient(135deg, var(--purple), var(--blue)); box-shadow: 0 3px 10px rgba(124,58,237,0.3); }
+  .avatar.user-av { background: linear-gradient(135deg, var(--blue), var(--blue-light)); color: white; font-family: 'Syne', sans-serif; font-size: 0.65rem; }
+
+  .bubble { max-width: 72%; padding: 11px 15px; border-radius: 16px; font-size: 0.875rem; line-height: 1.65; color: var(--text); }
   .message.ai .bubble { background: var(--glass); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-top-left-radius: 4px; box-shadow: var(--shadow); }
   .message.user .bubble { background: linear-gradient(135deg, var(--purple), #6D28D9); color: white; border-top-right-radius: 4px; box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
   .bubble strong { font-weight: 600; }
-  .bubble ul, .bubble ol { padding-left: 18px; margin: 6px 0; }
+  .bubble ul { padding-left: 18px; margin: 5px 0; }
   .bubble li { margin: 3px 0; }
-  .bubble p { margin: 4px 0; }
-  .bubble h2, .bubble h3 { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; margin: 8px 0 4px; color: var(--purple); }
+  .bubble p { margin: 3px 0; }
+  .bubble h2, .bubble h3 { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; margin: 7px 0 3px; color: var(--purple); }
   .message.user .bubble h2, .message.user .bubble h3 { color: rgba(255,255,255,0.9); }
-  .typing-dots { display: flex; gap: 4px; padding: 6px 4px; align-items: center; }
+  .bubble a {
+  color: var(--purple);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+  word-break: break-all;
+}
+.bubble a:hover { opacity: 0.8; }
+  .message.user .bubble a { color: #c4b5fd; text-decoration: underline; }
+
+  /* TYPING */
+  .typing-dots { display: flex; gap: 4px; padding: 4px 2px; align-items: center; }
   .typing-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--purple-mid); animation: bounce 1.2s infinite; }
   .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
   .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-6px); opacity: 1; } }
-  .input-bar { flex-shrink: 0; padding: 12px 0 16px; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0);opacity:0.5} 30%{transform:translateY(-6px);opacity:1} }
+
+  /* INPUT BAR — always at bottom */
+  .input-bar { flex-shrink: 0; padding: 8px 0 12px; }
   .input-wrap {
     display: flex; gap: 10px; align-items: flex-end;
     background: var(--glass); backdrop-filter: blur(20px);
     border: 1.5px solid var(--glass-border); border-radius: 20px;
-    padding: 10px 10px 10px 18px;
+    padding: 9px 9px 9px 16px;
     box-shadow: var(--shadow-lg); transition: border-color 0.2s;
   }
   .input-wrap:focus-within { border-color: var(--purple-mid); box-shadow: 0 0 0 3px rgba(124,58,237,0.08), var(--shadow-lg); }
-  #userInput { flex: 1; background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); resize: none; max-height: 120px; min-height: 24px; line-height: 1.5; }
+  #userInput {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text);
+    resize: none; max-height: 100px; min-height: 24px; line-height: 1.5;
+  }
   #userInput::placeholder { color: #a0aec0; }
-  .send-btn { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--purple), var(--blue)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
-  .send-btn:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(124,58,237,0.4); }
-  .send-btn:active { transform: scale(0.97); }
+  .send-btn {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: linear-gradient(135deg, var(--purple), var(--blue));
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+  }
+  .send-btn:hover { transform: scale(1.06); }
+  .send-btn:active { transform: scale(0.96); }
   .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .input-note { text-align: center; font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; }
+  .input-note { text-align: center; font-size: 0.67rem; color: var(--text-muted); margin-top: 5px; }
   .input-note a { color: var(--purple); text-decoration: none; }
-  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; font-size: 0.7rem; font-weight: 500; color: #059669; }
-  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
   .error-bubble { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; padding: 10px 14px; font-size: 0.82rem; color: #dc2626; margin: 8px 0; }
+
   @media (max-width: 600px) {
-    .welcome h1 { font-size: 1.3rem; }
-    .chips { gap: 6px; }
-    .chip { font-size: 0.72rem; padding: 5px 10px; }
-    .bubble { max-width: 85%; font-size: 0.83rem; }
+    header { padding: 0 14px; }
+    .welcome h1 { font-size: 1.2rem; }
+    .bubble { max-width: 85%; font-size: 0.82rem; }
     .header-btn span { display: none; }
   }
 </style>
 </head>
 <body>
+
 <header>
   <a class="logo" href="https://commercesehoga.github.io" target="_blank">
     <div class="logo-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/>
       </svg>
     </div>
@@ -183,30 +255,76 @@
   </div>
 </header>
 
-<div class="main">
+<div class="app">
+<div class="inner">
+
   <div class="welcome" id="welcomeSection">
     <h1>Hi! I'm <span>ThunderAI</span> ⚡</h1>
-    <p>Your personal study assistant — CUET, Banking, Class 11-12 Commerce & more</p>
-    <div class="chips">
-      <div class="chip" onclick="sendChip('CUET 2026 syllabus and exam pattern')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#7C3AED"/></svg>
-        CUET 2026
+    <p>CUET · Banking · Class 11-12 Commerce · Free Study Material</p>
+  </div>
+
+  <div class="chips-section">
+    <div class="chips-label">Quick Questions — tap to ask</div>
+    <div class="chips-scroll">
+      <div class="chip" onclick="sendChip('CUET 2026 ka syllabus aur exam pattern kya hai?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#7C3AED"/></svg>
+        CUET Syllabus
       </div>
-      <div class="chip" onclick="sendChip('How to prepare for IBPS PO banking exam from scratch')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#60A5FA" stroke-width="2" fill="none"/><path d="M2 10h20" stroke="#60A5FA" stroke-width="2"/></svg>
-        Banking Prep
+      <div class="chip" onclick="sendChip('CUET English paper mein kaun kaun se topics aate hain aur kaise prepare karein?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 7V4h16v3" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"/><path d="M9 20h6M12 4v16" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"/></svg>
+        CUET English
       </div>
-      <div class="chip" onclick="sendChip('Explain Class 12 Economics - National Income concepts')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#A78BFA" stroke-width="2" stroke-linecap="round"/></svg>
-        Economics
+      <div class="chip" onclick="sendChip('Mujhe CUET ke liye 30 din ka study plan do')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#60A5FA" stroke-width="2" fill="none"/><path d="M16 2v4M8 2v4M3 10h18" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/></svg>
+        30-Day Plan
       </div>
-      <div class="chip" onclick="sendChip('Give me a 30 day study plan for CUET English')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#B9D9DC" stroke-width="2" fill="none"/><path d="M8 12h8M8 8h8M8 16h5" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/></svg>
-        Study Plan
+      <div class="chip" onclick="sendChip('IBPS PO ki taiyari ekdum scratch se kaise shuru karein?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#60A5FA" stroke-width="2" fill="none"/><path d="M2 10h20" stroke="#60A5FA" stroke-width="2"/></svg>
+        IBPS PO
       </div>
-      <div class="chip" onclick="sendChip('Best books and notes for Class 12 Commerce')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="#7C3AED" stroke-width="2" fill="none"/></svg>
-        Books & Notes
+      <div class="chip" onclick="sendChip('SBI PO aur IBPS PO mein kya difference hai? Dono ke liye alag strategy chahiye kya?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" stroke="#60A5FA" stroke-width="2" fill="none"/></svg>
+        SBI vs IBPS
+      </div>
+      <div class="chip" onclick="sendChip('Banking exam mein Reasoning section kaise solve karein? Tips do')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#A78BFA" stroke-width="2" fill="none"/><path d="M12 8v4l3 3" stroke="#A78BFA" stroke-width="2" stroke-linecap="round"/></svg>
+        Reasoning Tips
+      </div>
+      <div class="chip" onclick="sendChip('Class 12 Economics National Income kya hota hai? GDP GNP explain karo')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#A78BFA" stroke-width="2" stroke-linecap="round"/></svg>
+        National Income
+      </div>
+      <div class="chip" onclick="sendChip('Class 12 Business Studies Management ke 14 principles of Fayol explain karo')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" stroke="#B9D9DC" stroke-width="2" fill="none"/><path d="M8 21h8M12 17v4" stroke="#B9D9DC" stroke-width="2" stroke-linecap="round"/></svg>
+        BST Management
+      </div>
+      <div class="chip" onclick="sendChip('Accountancy mein Trial Balance aur Balance Sheet mein kya difference hai?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><line x1="12" y1="2" x2="12" y2="22" stroke="#7C3AED" stroke-width="2"/><line x1="2" y1="12" x2="22" y2="12" stroke="#7C3AED" stroke-width="2"/></svg>
+        Accountancy
+      </div>
+      <div class="chip" onclick="sendChip('Class 12 ke liye best books aur free study notes kahan milenge?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="#60A5FA" stroke-width="2"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="#60A5FA" stroke-width="2" fill="none"/></svg>
+        Best Books
+      </div>
+      <div class="chip" onclick="sendChip('NCERT Economics Class 12 ke sabse important chapters kaunse hain exam ke liye?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="#10b981" stroke-width="2" fill="none"/></svg>
+        NCERT Chapters
+      </div>
+      <div class="chip" onclick="sendChip('Free mein online mock test kahan dun CUET ya banking ke liye?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        Free Mock Test
+      </div>
+      <div class="chip" onclick="sendChip('ThunderStudy platform mein kya kya features hain aur use kaise karein?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#7C3AED"/></svg>
+        Platform Help
+      </div>
+      <div class="chip" onclick="sendChip('3 mahine mein CUET crack karne ka complete crash course plan do')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#60A5FA" stroke-width="2" fill="none"/><path d="M12 6v6l4 2" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/></svg>
+        Crash Course
+      </div>
+      <div class="chip" onclick="sendChip('Commerce student hoon — DU mein admission ke liye CUET mein kitne marks chahiye?')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22 10v6M2 10l10-7 10 7M6 12v7a2 2 0 002 2h8a2 2 0 002-2v-7" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+        DU Admission
       </div>
     </div>
   </div>
@@ -217,13 +335,13 @@
     <div class="input-wrap">
       <textarea
         id="userInput"
-        placeholder="Ask anything — CUET, Banking, Economics, Study Tips..."
+        placeholder="Kuch bhi poocho — CUET, Banking, Notes, Study Plan..."
         rows="1"
         onkeydown="handleKey(event)"
         oninput="autoResize(this)"
       ></textarea>
       <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
           <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
@@ -234,6 +352,8 @@
       <a href="https://wondermayank.github.io" target="_blank">Wondermayank</a>
     </div>
   </div>
+
+</div>
 </div>
 
 <script>
@@ -246,71 +366,75 @@
 
   function autoResize(el) {
     el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    el.style.height = Math.min(el.scrollHeight, 100) + 'px';
   }
 
   function handleKey(e) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   }
 
-  function sendChip(text) { userInput.value = text; sendMessage(); }
+  function sendChip(text) {
+    userInput.value = text;
+    sendMessage();
+  }
 
   function hideWelcome() {
     if (!welcomeHidden) {
       welcomeHidden = true;
-      welcomeSection.style.transition = 'all 0.3s ease';
-      welcomeSection.style.opacity = '0';
-      welcomeSection.style.maxHeight = '0';
-      welcomeSection.style.padding = '0';
-      welcomeSection.style.overflow = 'hidden';
+      welcomeSection.classList.add('hidden');
     }
+  }
+
+  function escapeHtml(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function parseMarkdown(text) {
+    let s = escapeHtml(text);
+    s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    s = s.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    s = s.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    // Convert bullet lines to list
+    s = s.replace(/(^- .+(\n|$))+/gm, function(block) {
+      const items = block.trim().split('\n').map(l => '<li>' + l.replace(/^- /, '') + '</li>').join('');
+      return '<ul>' + items + '</ul>';
+    });
+    // Paragraphs
+    s = s.split(/\n\n+/).map(p => {
+      p = p.trim();
+      if (!p) return '';
+      if (/^<[hul]/.test(p)) return p;
+      return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+    return s;
   }
 
   function appendMessage(role, content) {
     const div = document.createElement('div');
-    div.className = `message ${role}`;
+    div.className = 'message ' + role;
     const avatar = document.createElement('div');
-    avatar.className = `avatar ${role === 'ai' ? 'ai' : 'user-av'}`;
+    avatar.className = 'avatar ' + (role === 'ai' ? 'ai' : 'user-av');
     if (role === 'ai') {
-      avatar.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/></svg>`;
+      avatar.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/></svg>';
     } else {
       avatar.textContent = 'YOU';
     }
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
-    if (role === 'ai') { bubble.innerHTML = parseMarkdown(content); }
-    else { bubble.textContent = content; }
+    bubble.innerHTML = role === 'ai' ? parseMarkdown(content) : '<p>' + escapeHtml(content) + '</p>';
     div.appendChild(avatar);
     div.appendChild(bubble);
     chatWrap.appendChild(div);
     chatWrap.scrollTop = chatWrap.scrollHeight;
-    return div;
-  }
-
-  function parseMarkdown(text) {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
-      .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
-      .replace(/^- (.*?)$/gm, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n/g, '<br>')
-      .replace(/^(.+)$/, '<p>$1</p>');
   }
 
   function showTyping() {
     const div = document.createElement('div');
     div.className = 'message ai';
     div.id = 'typing';
-    div.innerHTML = `
-      <div class="avatar ai">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/></svg>
-      </div>
-      <div class="bubble">
-        <div class="typing-dots"><span></span><span></span><span></span></div>
-      </div>`;
+    div.innerHTML = '<div class="avatar ai"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/></svg></div><div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
     chatWrap.appendChild(div);
     chatWrap.scrollTop = chatWrap.scrollHeight;
   }
@@ -331,7 +455,7 @@
     sendBtn.disabled = true;
     showTyping();
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch('https://thunderstudyai.vercel.app/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages })
@@ -339,37 +463,37 @@
       const data = await res.json();
       removeTyping();
       if (data.error) {
-        const errDiv = document.createElement('div');
-        errDiv.className = 'error-bubble';
-        errDiv.textContent = '⚠️ ' + data.error;
-        chatWrap.appendChild(errDiv);
+        const e = document.createElement('div');
+        e.className = 'error-bubble';
+        e.textContent = '⚠️ ' + data.error;
+        chatWrap.appendChild(e);
       } else {
         appendMessage('ai', data.reply);
         messages.push({ role: 'assistant', content: data.reply });
       }
     } catch (err) {
       removeTyping();
-      const errDiv = document.createElement('div');
-      errDiv.className = 'error-bubble';
-      errDiv.textContent = '⚠️ Connection error. Please try again.';
-      chatWrap.appendChild(errDiv);
+      const e = document.createElement('div');
+      e.className = 'error-bubble';
+      e.textContent = '⚠️ Connection error. Please try again.';
+      chatWrap.appendChild(e);
     }
     sendBtn.disabled = false;
     chatWrap.scrollTop = chatWrap.scrollHeight;
   }
 
+  // Greeting
   setTimeout(() => {
-    appendMessage('ai', `**Namaste! I'm ThunderAI** — your personal exam prep assistant from ThunderStudy!
+    appendMessage('ai', `**Namaste! Main hoon ThunderAI** — ThunderStudy ka official assistant! 🙏
 
-I can help you with:
-- **CUET 2026** — syllabus, strategy, mock tests
-- **Banking Exams** — IBPS PO, SBI PO, RRB, Clerk
-- **Class 11-12 Commerce** — Economics, BST, Accounts, English
-- **Books & Notes** — best FREE resources for your prep
-- **Platform Guide** — how to use ThunderStudy features
+Main help kar sakta hoon:
+- **CUET 2026** — syllabus, pattern, strategy
+- **Banking** — IBPS PO, SBI PO, RRB, Clerk
+- **Class 11-12** — Economics, BST, Accounts, English
+- **Notes & Books** — FREE study material
 
-Bas poocho — I'm here to help you crack it! ⚡`);
-  }, 400);
+Upar quick questions pe tap karo ya neeche apna sawaal likho ⚡`);
+  }, 300);
 </script>
 </body>
 </html>
