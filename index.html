@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThunderAI — ThunderStudy Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #7C3AED;
+    --purple-mid: #A78BFA;
+    --purple-light: #C4B5FD;
+    --blue: #60A5FA;
+    --blue-light: #B9D9DC;
+    --white: #ffffff;
+    --bg: #F5F3FF;
+    --glass: rgba(255,255,255,0.7);
+    --glass-border: rgba(167,139,250,0.25);
+    --text: #1e1b4b;
+    --text-muted: #6b7280;
+    --shadow: 0 8px 32px rgba(124,58,237,0.10);
+    --shadow-lg: 0 20px 60px rgba(124,58,237,0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 10% 20%, rgba(124,58,237,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(96,165,250,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(196,181,253,0.06) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+  header {
+    position: relative;
+    z-index: 10;
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 20px rgba(124,58,237,0.08);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--purple), var(--blue));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(124,58,237,0.35);
+  }
+  .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--text); }
+  .logo-text span { background: linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .header-links { display: flex; align-items: center; gap: 8px; }
+  .header-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    background: rgba(124,58,237,0.08);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500;
+    color: var(--purple); text-decoration: none; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .header-btn:hover { background: rgba(124,58,237,0.15); transform: translateY(-1px); }
+  .main {
+    position: relative; z-index: 1;
+    flex: 1; display: flex; flex-direction: column;
+    max-width: 860px; width: 100%;
+    margin: 0 auto; padding: 0 16px;
+    height: calc(100vh - 64px);
+  }
+  .welcome { padding: 24px 0 16px; text-align: center; flex-shrink: 0; }
+  .welcome h1 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+  .welcome h1 span { background: linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .welcome p { font-size: 0.875rem; color: var(--text-muted); margin-top: 6px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 14px; flex-shrink: 0; }
+  .chip {
+    padding: 6px 14px;
+    background: var(--glass); backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border); border-radius: 20px;
+    font-size: 0.78rem; font-weight: 500; color: var(--purple);
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px; white-space: nowrap;
+  }
+  .chip:hover { background: rgba(124,58,237,0.1); border-color: var(--purple-mid); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(124,58,237,0.12); }
+  .chat-wrap { flex: 1; overflow-y: auto; padding: 16px 0; scroll-behavior: smooth; min-height: 0; }
+  .chat-wrap::-webkit-scrollbar { width: 4px; }
+  .chat-wrap::-webkit-scrollbar-track { background: transparent; }
+  .chat-wrap::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 2px; }
+  .message { display: flex; gap: 10px; margin-bottom: 16px; animation: msgIn 0.3s ease; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .message.user { flex-direction: row-reverse; }
+  .avatar { width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; }
+  .avatar.ai { background: linear-gradient(135deg, var(--purple), var(--blue)); box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
+  .avatar.user-av { background: linear-gradient(135deg, var(--blue), var(--blue-light)); box-shadow: 0 4px 12px rgba(96,165,250,0.3); font-family: 'Syne', sans-serif; color: white; font-size: 0.75rem; }
+  .bubble { max-width: 72%; padding: 12px 16px; border-radius: 16px; font-size: 0.875rem; line-height: 1.6; color: var(--text); }
+  .message.ai .bubble { background: var(--glass); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-top-left-radius: 4px; box-shadow: var(--shadow); }
+  .message.user .bubble { background: linear-gradient(135deg, var(--purple), #6D28D9); color: white; border-top-right-radius: 4px; box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
+  .bubble strong { font-weight: 600; }
+  .bubble ul, .bubble ol { padding-left: 18px; margin: 6px 0; }
+  .bubble li { margin: 3px 0; }
+  .bubble p { margin: 4px 0; }
+  .bubble h2, .bubble h3 { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; margin: 8px 0 4px; color: var(--purple); }
+  .message.user .bubble h2, .message.user .bubble h3 { color: rgba(255,255,255,0.9); }
+  .typing-dots { display: flex; gap: 4px; padding: 6px 4px; align-items: center; }
+  .typing-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--purple-mid); animation: bounce 1.2s infinite; }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-6px); opacity: 1; } }
+  .input-bar { flex-shrink: 0; padding: 12px 0 16px; }
+  .input-wrap {
+    display: flex; gap: 10px; align-items: flex-end;
+    background: var(--glass); backdrop-filter: blur(20px);
+    border: 1.5px solid var(--glass-border); border-radius: 20px;
+    padding: 10px 10px 10px 18px;
+    box-shadow: var(--shadow-lg); transition: border-color 0.2s;
+  }
+  .input-wrap:focus-within { border-color: var(--purple-mid); box-shadow: 0 0 0 3px rgba(124,58,237,0.08), var(--shadow-lg); }
+  #userInput { flex: 1; background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); resize: none; max-height: 120px; min-height: 24px; line-height: 1.5; }
+  #userInput::placeholder { color: #a0aec0; }
+  .send-btn { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--purple), var(--blue)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
+  .send-btn:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(124,58,237,0.4); }
+  .send-btn:active { transform: scale(0.97); }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .input-note { text-align: center; font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; }
+  .input-note a { color: var(--purple); text-decoration: none; }
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; font-size: 0.7rem; font-weight: 500; color: #059669; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .error-bubble { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; padding: 10px 14px; font-size: 0.82rem; color: #dc2626; margin: 8px 0; }
+  @media (max-width: 600px) {
+    .welcome h1 { font-size: 1.3rem; }
+    .chips { gap: 6px; }
+    .chip { font-size: 0.72rem; padding: 5px 10px; }
+    .bubble { max-width: 85%; font-size: 0.83rem; }
+    .header-btn span { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://commercesehoga.github.io" target="_blank">
+    <div class="logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/>
+      </svg>
+    </div>
+    <div class="logo-text">Thunder<span>AI</span></div>
+  </a>
+  <div class="header-links">
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      <span>Online</span>
+    </div>
+    <a class="header-btn" href="https://t.me/THUNDERSTUDY" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.68 7.93c-.12.58-.46.72-.93.45l-2.57-1.9-1.24 1.2c-.14.14-.26.26-.52.26l.18-2.6 4.74-4.28c.21-.18-.04-.28-.32-.1L7.76 14.6l-2.53-.79c-.55-.17-.56-.55.12-.82l9.9-3.82c.46-.17.86.11.71.83z" fill="#7C3AED"/>
+      </svg>
+      <span>Community</span>
+    </a>
+    <a class="header-btn" href="https://commercesehoga.github.io" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="#7C3AED" stroke-width="2" fill="none"/>
+        <polyline points="9,22 9,12 15,12 15,22" stroke="#7C3AED" stroke-width="2" fill="none"/>
+      </svg>
+      <span>Platform</span>
+    </a>
+  </div>
+</header>
+
+<div class="main">
+  <div class="welcome" id="welcomeSection">
+    <h1>Hi! I'm <span>ThunderAI</span> ⚡</h1>
+    <p>Your personal study assistant — CUET, Banking, Class 11-12 Commerce & more</p>
+    <div class="chips">
+      <div class="chip" onclick="sendChip('CUET 2026 syllabus and exam pattern')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#7C3AED"/></svg>
+        CUET 2026
+      </div>
+      <div class="chip" onclick="sendChip('How to prepare for IBPS PO banking exam from scratch')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#60A5FA" stroke-width="2" fill="none"/><path d="M2 10h20" stroke="#60A5FA" stroke-width="2"/></svg>
+        Banking Prep
+      </div>
+      <div class="chip" onclick="sendChip('Explain Class 12 Economics - National Income concepts')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#A78BFA" stroke-width="2" stroke-linecap="round"/></svg>
+        Economics
+      </div>
+      <div class="chip" onclick="sendChip('Give me a 30 day study plan for CUET English')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#B9D9DC" stroke-width="2" fill="none"/><path d="M8 12h8M8 8h8M8 16h5" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/></svg>
+        Study Plan
+      </div>
+      <div class="chip" onclick="sendChip('Best books and notes for Class 12 Commerce')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="#7C3AED" stroke-width="2" fill="none"/></svg>
+        Books & Notes
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-wrap" id="chatWrap"></div>
+
+  <div class="input-bar">
+    <div class="input-wrap">
+      <textarea
+        id="userInput"
+        placeholder="Ask anything — CUET, Banking, Economics, Study Tips..."
+        rows="1"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="input-note">
+      Powered by <strong>Groq × Llama 3.3 70B</strong> &nbsp;·&nbsp;
+      <a href="https://commercesehoga.github.io" target="_blank">ThunderStudy</a> by
+      <a href="https://wondermayank.github.io" target="_blank">Wondermayank</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatWrap = document.getElementById('chatWrap');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const welcomeSection = document.getElementById('welcomeSection');
+  let messages = [];
+  let welcomeHidden = false;
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function sendChip(text) { userInput.value = text; sendMessage(); }
+
+  function hideWelcome() {
+    if (!welcomeHidden) {
+      welcomeHidden = true;
+      welcomeSection.style.transition = 'all 0.3s ease';
+      welcomeSection.style.opacity = '0';
+      welcomeSection.style.maxHeight = '0';
+      welcomeSection.style.padding = '0';
+      welcomeSection.style.overflow = 'hidden';
+    }
+  }
+
+  function appendMessage(role, content) {
+    const div = document.createElement('div');
+    div.className = `message ${role}`;
+    const avatar = document.createElement('div');
+    avatar.className = `avatar ${role === 'ai' ? 'ai' : 'user-av'}`;
+    if (role === 'ai') {
+      avatar.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/></svg>`;
+    } else {
+      avatar.textContent = 'YOU';
+    }
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    if (role === 'ai') { bubble.innerHTML = parseMarkdown(content); }
+    else { bubble.textContent = content; }
+    div.appendChild(avatar);
+    div.appendChild(bubble);
+    chatWrap.appendChild(div);
+    chatWrap.scrollTop = chatWrap.scrollHeight;
+    return div;
+  }
+
+  function parseMarkdown(text) {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
+      .replace(/^- (.*?)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br>')
+      .replace(/^(.+)$/, '<p>$1</p>');
+  }
+
+  function showTyping() {
+    const div = document.createElement('div');
+    div.className = 'message ai';
+    div.id = 'typing';
+    div.innerHTML = `
+      <div class="avatar ai">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/></svg>
+      </div>
+      <div class="bubble">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+      </div>`;
+    chatWrap.appendChild(div);
+    chatWrap.scrollTop = chatWrap.scrollHeight;
+  }
+
+  function removeTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  async function sendMessage() {
+    const text = userInput.value.trim();
+    if (!text || sendBtn.disabled) return;
+    hideWelcome();
+    appendMessage('user', text);
+    messages.push({ role: 'user', content: text });
+    userInput.value = '';
+    userInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    showTyping();
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+      });
+      const data = await res.json();
+      removeTyping();
+      if (data.error) {
+        const errDiv = document.createElement('div');
+        errDiv.className = 'error-bubble';
+        errDiv.textContent = '⚠️ ' + data.error;
+        chatWrap.appendChild(errDiv);
+      } else {
+        appendMessage('ai', data.reply);
+        messages.push({ role: 'assistant', content: data.reply });
+      }
+    } catch (err) {
+      removeTyping();
+      const errDiv = document.createElement('div');
+      errDiv.className = 'error-bubble';
+      errDiv.textContent = '⚠️ Connection error. Please try again.';
+      chatWrap.appendChild(errDiv);
+    }
+    sendBtn.disabled = false;
+    chatWrap.scrollTop = chatWrap.scrollHeight;
+  }
+
+  setTimeout(() => {
+    appendMessage('ai', `**Namaste! I'm ThunderAI** — your personal exam prep assistant from ThunderStudy!
+
+I can help you with:
+- **CUET 2026** — syllabus, strategy, mock tests
+- **Banking Exams** — IBPS PO, SBI PO, RRB, Clerk
+- **Class 11-12 Commerce** — Economics, BST, Accounts, English
+- **Books & Notes** — best FREE resources for your prep
+- **Platform Guide** — how to use ThunderStudy features
+
+Bas poocho — I'm here to help you crack it! ⚡`);
+  }, 400);
+</script>
+</body>
+</html>
