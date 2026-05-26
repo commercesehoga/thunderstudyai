@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   // ⚠️ TRIAL KEY — Revoke this and add new key in Vercel Environment Variables
   // After adding env variable, replace below line with:
   // const GROQ_API_KEY = process.env.GROQ_API_KEY;
-  const GROQ_API_KEY = process.env.GROQ_API_KEY || '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';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
   const systemPrompt = `You are ThunderAI — the official AI assistant of ThunderStudy. You are a study mentor for Indian competitive exam students.
 
