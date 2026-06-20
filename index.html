@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('thunder-ai-theme');
+    if(!t){ t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thunder AI Lab — Every AI Tool Built by Thunder, in One Place</title>
+<meta name="description" content="Explore every AI tool built by Thunder: an exam-ready study chatbot, AI mindmap generator, flashcard maker, and mock test creator for ThunderStudy, plus Tiny AI Chat and Self Care AI for everyday life.">
+<meta property="og:title" content="Thunder AI Lab — Every AI Tool I've Built">
+<meta property="og:description" content="Six AI tools across ThunderStudy and Wondermayank — study smarter, live calmer.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Thunder AI Lab">
+<meta name="twitter:description" content="Six AI tools across ThunderStudy and Wondermayank — study smarter, live calmer.">
+<meta name="twitter:image" content="/og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 4 14h6l-1 8 9-12h-6z' fill='%23573AFC'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Thunder AI Lab",
+  "itemListElement": [
+    {"@type":"SoftwareApplication","position":1,"name":"AI Chatbot Study","url":"https://ai.thunderstudy.indevs.in/chat","applicationCategory":"EducationApplication","description":"Ask anything and get exam-ready answers instantly, built for CUET, SSC, Banking and UPSC prep."},
+    {"@type":"SoftwareApplication","position":2,"name":"AI Mindmap","url":"https://mindmap.thunderstudy.indevs.in","applicationCategory":"EducationApplication","description":"Turn any topic or chapter into a clear visual mind map in seconds."},
+    {"@type":"SoftwareApplication","position":3,"name":"AI Flashcard","url":"https://flashcard.thunderstudy.indevs.in","applicationCategory":"EducationApplication","description":"Auto-generate flashcards from notes or topics and revise faster."},
+    {"@type":"SoftwareApplication","position":4,"name":"AI Mock Test Maker","url":"https://aimock.thunderstudy.indevs.in","applicationCategory":"EducationApplication","description":"Generate full-length mock tests for any competitive exam, instantly."},
+    {"@type":"SoftwareApplication","position":5,"name":"Tiny AI Chat","url":"https://tiny.wondermayank.indevs.in","applicationCategory":"LifestyleApplication","description":"A tiny, witty AI companion for everyday conversations."},
+    {"@type":"SoftwareApplication","position":6,"name":"Self Care AI","url":"https://selfcare.wondermayank.in","applicationCategory":"LifestyleApplication","description":"A gentle AI guide for calmer, more mindful self-care."}
+  ]
+}
+</script>
+<style>
+  :root{
+    --canvas:#F4F1FC;
+    --canvas-deep:#ECE6FB;
+    --surface:#FAF8FE;
+    --ink:#2B2640;
+    --body-c:#5C5575;
+    --muted:#8B84A0;
+    --hairline:rgba(43,38,64,.08);
+    --primary:#573AFC;
+    --primary-active:#4527E0;
+    --primary-soft:#E4DEFF;
+    --on-primary:#ffffff;
+
+    --clay-light:rgba(255,255,255,.9);
+    --clay-dark:rgba(150,138,205,.38);
+    --clay-dark-strong:rgba(120,108,180,.5);
+
+    --radius-card:28px;
+    --radius-sm:16px;
+    --radius-pill:999px;
+    --font:'Inter',system-ui,-apple-system,sans-serif;
+  }
+
+  [data-theme="dark"]{
+    --canvas:#1A1730;
+    --canvas-deep:#15122A;
+    --surface:#221D3C;
+    --ink:#F1EEFB;
+    --body-c:#C7C0E0;
+    --muted:#8E86AC;
+    --hairline:rgba(255,255,255,.08);
+    --primary:#9A7AFB;
+    --primary-active:#B196FB;
+    --primary-soft:#2E2650;
+    --on-primary:#1A1730;
+
+    --clay-light:rgba(255,255,255,.05);
+    --clay-dark:rgba(0,0,0,.55);
+    --clay-dark-strong:rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font);
+    background:var(--canvas);
+    color:var(--body-c);
+    -webkit-font-smoothing:antialiased;
+    transition:background .3s ease,color .3s ease;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{color:var(--ink);margin:0;}
+  p{margin:0;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:var(--font);border:none;background:none;cursor:pointer;}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 32px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  .clay{ box-shadow:10px 10px 24px var(--clay-dark), -10px -10px 24px var(--clay-light); }
+  .clay-sm{ box-shadow:6px 6px 16px var(--clay-dark), -6px -6px 16px var(--clay-light); }
+  .clay-press{ transition:transform .15s ease, box-shadow .15s ease; }
+  .clay-press:active{
+    transform:scale(.96);
+    box-shadow:inset 5px 5px 12px var(--clay-dark), inset -5px -5px 12px var(--clay-light);
+  }
+
+  /* ---------- Loader ---------- */
+  #loader{
+    position:fixed;inset:0;z-index:999;background:var(--canvas);
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity .4s ease, visibility .4s ease;
+  }
+  #loader.hide{opacity:0;visibility:hidden;}
+  .loader-blob{
+    width:64px;height:64px;border-radius:28px;background:var(--primary-soft);
+    box-shadow:8px 8px 20px var(--clay-dark), -8px -8px 20px var(--clay-light);
+    animation:pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{transform:scale(.85);} 50%{transform:scale(1.05);} }
+
+  /* ---------- Nav ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--canvas);
+    border-bottom:1px solid var(--hairline);
+    backdrop-filter:blur(16px) saturate(160%);
+  }
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:var(--ink);}
+  .brand-mark{
+    width:36px;height:36px;border-radius:12px;background:var(--primary);
+    display:flex;align-items:center;justify-content:center;flex:none;
+    box-shadow:4px 4px 10px var(--clay-dark), -4px -4px 10px var(--clay-light);
+  }
+  .brand-mark svg{width:18px;height:18px;}
+  .nav-links{display:flex;align-items:center;gap:28px;}
+  .nav-links a{font-size:14px;font-weight:600;color:var(--body-c);}
+  .nav-links a:hover{color:var(--primary);}
+  .nav-right{display:flex;align-items:center;gap:12px;}
+  .theme-btn{
+    width:40px;height:40px;border-radius:14px;background:var(--surface);
+    display:flex;align-items:center;justify-content:center;color:var(--ink);
+    box-shadow:4px 4px 10px var(--clay-dark), -4px -4px 10px var(--clay-light);
+  }
+  .theme-btn svg{width:18px;height:18px;}
+  .nav-cta{
+    display:inline-flex;align-items:center;height:40px;padding:0 18px;border-radius:var(--radius-pill);
+    background:var(--primary);color:var(--on-primary);font-size:14px;font-weight:600;
+    box-shadow:4px 4px 10px var(--clay-dark), -4px -4px 10px var(--clay-light);
+  }
+  .hamburger{display:none;width:40px;height:40px;border-radius:14px;background:var(--surface);align-items:center;justify-content:center;box-shadow:4px 4px 10px var(--clay-dark), -4px -4px 10px var(--clay-light);}
+  .hamburger svg{width:18px;height:18px;color:var(--ink);}
+  .mobile-menu{display:none;flex-direction:column;gap:4px;padding:16px 20px 24px;background:var(--canvas);border-bottom:1px solid var(--hairline);}
+  .mobile-menu a{padding:12px 4px;font-weight:600;font-size:15px;color:var(--ink);border-bottom:1px solid var(--hairline);}
+  .mobile-menu.open{display:flex;}
+
+  @media (max-width:860px){
+    .nav-links{display:none;}
+    .hamburger{display:flex;}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;padding:96px 0 60px;text-align:center;overflow:hidden;}
+  .blob{position:absolute;border-radius:50%;filter:blur(2px);opacity:.55;z-index:0;}
+  .blob-1{width:280px;height:280px;background:var(--primary-soft);top:-80px;left:-100px;}
+  .blob-2{width:220px;height:220px;background:#FFE3D2;top:40px;right:-80px;}
+  [data-theme="dark"] .blob{opacity:.18;}
+
+  .eyebrow{
+    position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;
+    padding:8px 18px;border-radius:var(--radius-pill);background:var(--surface);
+    color:var(--primary);font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+    box-shadow:4px 4px 10px var(--clay-dark), -4px -4px 10px var(--clay-light);
+  }
+  .eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);}
+  .hero h1{
+    position:relative;z-index:1;
+    font-size:52px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;
+    max-width:780px;margin:24px auto 0;
+  }
+  .hero h1 span{color:var(--primary);}
+  .hero p.lead{
+    position:relative;z-index:1;
+    max-width:560px;margin:20px auto 0;font-size:18px;line-height:1.5;color:var(--body-c);
+  }
+  .hero-cta{
+    position:relative;z-index:1;display:inline-flex;align-items:center;
+    margin:36px auto 0;background:var(--surface);border-radius:var(--radius-pill);
+    padding:6px 6px 6px 26px;box-shadow:6px 6px 16px var(--clay-dark), -6px -6px 16px var(--clay-light);
+  }
+  .hero-cta span{font-weight:600;font-size:15px;color:var(--ink);margin-right:18px;}
+  .hero-cta .arrow-circle{
+    width:42px;height:42px;border-radius:50%;background:var(--primary);
+    display:flex;align-items:center;justify-content:center;color:var(--on-primary);flex:none;
+  }
+  .hero-cta .arrow-circle svg{width:18px;height:18px;}
+
+  /* ---------- Arc cards ---------- */
+  .arc{
+    position:relative;z-index:1;display:flex;justify-content:center;gap:18px;
+    margin-top:64px;padding:20px 10px 10px;
+  }
+  .arc-card{
+    width:148px;flex:none;border-radius:24px;padding:20px 14px;
+    display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;
+    background:var(--tint);
+    box-shadow:8px 8px 18px var(--clay-dark), -8px -8px 18px var(--clay-light);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .arc-card:hover{transform:translateY(-14px) scale(1.04) !important;box-shadow:10px 14px 26px var(--clay-dark-strong), -8px -8px 20px var(--clay-light);}
+  .arc-card:nth-child(1){transform:rotate(-9deg) translateY(38px);}
+  .arc-card:nth-child(2){transform:rotate(-5deg) translateY(16px);}
+  .arc-card:nth-child(3){transform:rotate(-1.5deg) translateY(0px);}
+  .arc-card:nth-child(4){transform:rotate(1.5deg) translateY(0px);}
+  .arc-card:nth-child(5){transform:rotate(5deg) translateY(16px);}
+  .arc-card:nth-child(6){transform:rotate(9deg) translateY(38px);}
+  .arc-tag{
+    font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);
+    background:rgba(255,255,255,.55);padding:3px 10px;border-radius:var(--radius-pill);
+  }
+  [data-theme="dark"] .arc-tag{background:rgba(0,0,0,.25);}
+  .arc-icon{
+    width:48px;height:48px;border-radius:16px;background:rgba(255,255,255,.6);
+    display:flex;align-items:center;justify-content:center;color:var(--accent);margin-top:4px;
+  }
+  [data-theme="dark"] .arc-icon{background:rgba(0,0,0,.2);}
+  .arc-icon svg{width:24px;height:24px;}
+  .arc-card h4{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3;}
+
+  @media (max-width:900px){
+    .arc{overflow-x:auto;justify-content:flex-start;padding:20px 24px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;}
+    .arc-card{transform:none !important;scroll-snap-align:start;}
+    .arc-card:hover{transform:translateY(-6px) scale(1.02) !important;}
+  }
+  @media (max-width:640px){
+    .hero{padding:72px 0 44px;}
+    .hero h1{font-size:32px;}
+    .hero p.lead{font-size:16px;}
+  }
+
+  /* ---------- Section heads ---------- */
+  .section{padding:88px 0;}
+  .section.parchment{background:var(--canvas-deep);}
+  .section-head{max-width:600px;margin:0 auto 48px;text-align:center;}
+  .section-eyebrow{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);}
+  .section-head h2{font-size:34px;font-weight:700;margin-top:10px;letter-spacing:-0.3px;}
+  .section-head p{margin-top:14px;font-size:16px;line-height:1.55;color:var(--body-c);}
+
+  /* ---------- Tool grid ---------- */
+  .tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+  .tools-grid.personal{grid-template-columns:repeat(2,1fr);max-width:880px;margin:0 auto;}
+  .tool-card{
+    display:block;background:var(--surface);border-radius:var(--radius-card);
+    padding:30px 26px;box-shadow:8px 8px 20px var(--clay-dark), -8px -8px 20px var(--clay-light);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .tool-card:hover{transform:translateY(-6px);box-shadow:10px 14px 26px var(--clay-dark-strong), -8px -8px 20px var(--clay-light);}
+  .tool-icon{
+    width:56px;height:56px;border-radius:18px;background:var(--tint);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);
+  }
+  .tool-icon svg{width:26px;height:26px;}
+  .tool-card h3{font-size:18px;margin-top:20px;}
+  .tool-card p{font-size:14.5px;line-height:1.5;margin-top:8px;color:var(--body-c);min-height:42px;}
+  .tool-link{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--accent);}
+  .tool-link svg{width:14px;height:14px;}
+  .tool-url{display:block;margin-top:10px;font-size:12px;color:var(--muted);word-break:break-all;}
+
+  .tools-grid.personal .tool-card{padding:36px 32px;}
+  .tools-grid.personal .tool-card p{min-height:0;}
+
+  @media (max-width:1024px){ .tools-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){
+    .tools-grid, .tools-grid.personal{grid-template-columns:1fr;}
+    .section{padding:64px 0;}
+    .section-head h2{font-size:26px;}
+  }
+
+  /* ---------- CTA band ---------- */
+  .cta-band{
+    background:var(--ink);color:#fff;text-align:center;padding:80px 0;
+  }
+  [data-theme="dark"] .cta-band{background:#0E0C1C;}
+  .cta-band h2{color:#fff;font-size:30px;font-weight:700;max-width:560px;margin:0 auto;}
+  .cta-band p{color:rgba(255,255,255,.7);margin-top:14px;font-size:15px;}
+  .cta-band .hero-cta{background:rgba(255,255,255,.08);box-shadow:none;margin-top:30px;}
+  .cta-band .hero-cta span{color:#fff;}
+
+  /* ---------- FAQ ---------- */
+  .faq-list{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+  .faq-item{
+    background:var(--surface);border-radius:20px;padding:20px 24px;cursor:pointer;
+    box-shadow:6px 6px 16px var(--clay-dark), -6px -6px 16px var(--clay-light);
+  }
+  .faq-q{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15.5px;color:var(--ink);}
+  .faq-q svg{width:18px;height:18px;color:var(--primary);flex:none;transition:transform .2s ease;}
+  .faq-item.open .faq-q svg{transform:rotate(45deg);}
+  .faq-a{max-height:0;overflow:hidden;font-size:14.5px;line-height:1.55;color:var(--body-c);transition:max-height .25s ease;}
+  .faq-item.open .faq-a{max-height:220px;margin-top:12px;}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--canvas-deep);padding:64px 0 32px;}
+  .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;}
+  .footer-col h5{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+  .footer-col a{display:block;font-size:14px;color:var(--body-c);margin-bottom:10px;}
+  .footer-col a:hover{color:var(--primary);}
+  .footer-brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink);margin-bottom:14px;}
+  .footer-brand .brand-mark{width:32px;height:32px;border-radius:10px;}
+  .footer-bottom{margin-top:48px;padding-top:24px;border-top:1px solid var(--hairline);text-align:center;font-size:12.5px;color:var(--muted);}
+  @media (max-width:768px){ .footer-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:480px){ .footer-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div id="loader" aria-hidden="true"><div class="loader-blob"></div></div>
+
+<header class="nav">
+  <div class="wrap">
+    <a href="#top" class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="#fff"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+      Thunder AI Lab
+    </a>
+    <nav class="nav-links">
+      <a href="#study-ai">Study AI</a>
+      <a href="#personal-ai">Personal AI</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode">
+        <svg id="themeIconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+        <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="display:none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+      </button>
+      <a href="#tools" class="nav-cta">Explore Tools</a>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#study-ai">Study AI</a>
+    <a href="#personal-ai">Personal AI</a>
+    <a href="#faq">FAQ</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" id="tools">
+    <div class="blob blob-1" aria-hidden="true"></div>
+    <div class="blob blob-2" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow"><span class="eyebrow-dot"></span>Thunder AI Lab</span>
+      <h1>Six AI Tools Built to Help You <span>Study Smarter</span> &amp; Live Calmer</h1>
+      <p class="lead">From an exam-ready chatbot to a mindful self-care companion — every AI experience I've built across ThunderStudy and Wondermayank, all in one place.</p>
+      <a href="#study-ai" class="hero-cta clay-press">
+        <span>Explore All AI Tools</span>
+        <span class="arrow-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <div class="arc">
+        <a class="arc-card card-chat" style="--accent:#573AFC;--tint:#E3DBFF" href="https://ai.thunderstudy.indevs.in/chat" target="_blank" rel="noopener">
+          <span class="arc-tag">Study</span>
+          <span class="arc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h13a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/><path d="M17 2.4l.7 1.4 1.4.7-1.4.7-.7 1.4-.7-1.4-1.4-.7 1.4-.7z"/></svg></span>
+          <h4>AI Chatbot Study</h4>
+        </a>
+        <a class="arc-card card-mindmap" style="--accent:#2F6FEE;--tint:#DCEBFF" href="https://mindmap.thunderstudy.indevs.in" target="_blank" rel="noopener">
+          <span class="arc-tag">Study</span>
+          <span class="arc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.1"/><circle cx="5" cy="6" r="1.7"/><circle cx="19" cy="6" r="1.7"/><circle cx="5" cy="18" r="1.7"/><circle cx="19" cy="18" r="1.7"/><path d="M10.3 10.6 6.3 7.2M13.7 10.6l4-3.4M10.3 13.4l-4 3.4M13.7 13.4l4 3.4"/></svg></span>
+          <h4>AI Mindmap</h4>
+        </a>
+        <a class="arc-card card-flashcard" style="--accent:#8B3DE8;--tint:#ECDBFF" href="https://flashcard.thunderstudy.indevs.in" target="_blank" rel="noopener">
+          <span class="arc-tag">Study</span>
+          <span class="arc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="10" rx="2.4"/><path d="M8 4.2h11a1 1 0 0 1 1 1v8.6"/></svg></span>
+          <h4>AI Flashcard</h4>
+        </a>
+        <a class="arc-card card-mock" style="--accent:#0EA894;--tint:#D7F5EF" href="https://aimock.thunderstudy.indevs.in" target="_blank" rel="noopener">
+          <span class="arc-tag">Study</span>
+          <span class="arc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3" width="15" height="18" rx="2.4"/><path d="M8 8.2h8M8 12h5M8 15.8h8"/></svg></span>
+          <h4>AI Mock Test Maker</h4>
+        </a>
+        <a class="arc-card card-tiny" style="--accent:#E0622E;--tint:#FFE3D2" href="https://tiny.wondermayank.indevs.in" target="_blank" rel="noopener">
+          <span class="arc-tag">Personal</span>
+          <span class="arc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="6" width="15" height="11.4" rx="4.5"/><path d="M12 3v3"/><path d="M9.2 14.4c.9.9 2.6.9 3.6 0"/><circle cx="9.3" cy="11.2" r="1.05" fill="currentColor" stroke="none"/><circle cx="14.7" cy="11.2" r="1.05" fill="currentColor" stroke="none"/></svg></span>
+          <h4>Tiny AI Chat</h4>
+        </a>
+        <a class="arc-card card-selfcare" style="--accent:#E0467F;--tint:#FFE0ED" href="https://selfcare.wondermayank.in" target="_blank" rel="noopener">
+          <span class="arc-tag">Personal</span>
+          <span class="arc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19.4s-6.6-4.1-6.6-9.3a3.8 3.8 0 0 1 6.6-2.5 3.8 3.8 0 0 1 6.6 2.5c0 5.2-6.6 9.3-6.6 9.3Z"/></svg></span>
+          <h4>Self Care AI</h4>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STUDY AI -->
+  <section class="section parchment" id="study-ai">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">AI for Study</span>
+        <h2>Built for Indian Competitive Exams</h2>
+        <p>Four AI tools woven into ThunderStudy — for CUET, SSC, Banking and UPSC prep, from first read-through to final mock.</p>
+      </div>
+      <div class="tools-grid">
+
+        <a class="tool-card clay-press" style="--accent:#573AFC;--tint:#E3DBFF" href="https://ai.thunderstudy.indevs.in/chat" target="_blank" rel="noopener">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h13a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/><path d="M17 2.4l.7 1.4 1.4.7-1.4.7-.7 1.4-.7-1.4-1.4-.7 1.4-.7z"/></svg></span>
+          <h3>AI Chatbot Study</h3>
+          <p>Ask anything from any subject and get exam-ready answers instantly.</p>
+          <span class="tool-link">Open App <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <span class="tool-url">ai.thunderstudy.indevs.in/chat</span>
+        </a>
+
+        <a class="tool-card clay-press" style="--accent:#2F6FEE;--tint:#DCEBFF" href="https://mindmap.thunderstudy.indevs.in" target="_blank" rel="noopener">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.1"/><circle cx="5" cy="6" r="1.7"/><circle cx="19" cy="6" r="1.7"/><circle cx="5" cy="18" r="1.7"/><circle cx="19" cy="18" r="1.7"/><path d="M10.3 10.6 6.3 7.2M13.7 10.6l4-3.4M10.3 13.4l-4 3.4M13.7 13.4l4 3.4"/></svg></span>
+          <h3>AI Mindmap</h3>
+          <p>Turn any topic or chapter into a clear, visual mind map in seconds.</p>
+          <span class="tool-link">Open App <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <span class="tool-url">mindmap.thunderstudy.indevs.in</span>
+        </a>
+
+        <a class="tool-card clay-press" style="--accent:#8B3DE8;--tint:#ECDBFF" href="https://flashcard.thunderstudy.indevs.in" target="_blank" rel="noopener">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="10" rx="2.4"/><path d="M8 4.2h11a1 1 0 0 1 1 1v8.6"/></svg></span>
+          <h3>AI Flashcard</h3>
+          <p>Auto-generate flashcards from your notes or topics and revise faster.</p>
+          <span class="tool-link">Open App <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <span class="tool-url">flashcard.thunderstudy.indevs.in</span>
+        </a>
+
+        <a class="tool-card clay-press" style="--accent:#0EA894;--tint:#D7F5EF" href="https://aimock.thunderstudy.indevs.in" target="_blank" rel="noopener">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3" width="15" height="18" rx="2.4"/><path d="M8 8.2h8M8 12h5M8 15.8h8"/></svg></span>
+          <h3>AI Mock Test Maker</h3>
+          <p>Generate full-length mock tests for any competitive exam, instantly.</p>
+          <span class="tool-link">Open App <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <span class="tool-url">aimock.thunderstudy.indevs.in</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PERSONAL AI -->
+  <section class="section" id="personal-ai">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">Personal AI</span>
+        <h2>Beyond Study — AI for Everyday Life</h2>
+        <p>Two AI companions from the Wondermayank side of things, built for conversation and calm rather than exams.</p>
+      </div>
+      <div class="tools-grid personal">
+
+        <a class="tool-card clay-press" style="--accent:#E0622E;--tint:#FFE3D2" href="https://tiny.wondermayank.indevs.in" target="_blank" rel="noopener">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="6" width="15" height="11.4" rx="4.5"/><path d="M12 3v3"/><path d="M9.2 14.4c.9.9 2.6.9 3.6 0"/><circle cx="9.3" cy="11.2" r="1.05" fill="currentColor" stroke="none"/><circle cx="14.7" cy="11.2" r="1.05" fill="currentColor" stroke="none"/></svg></span>
+          <h3>Tiny AI Chat</h3>
+          <p>A tiny, witty AI companion for everyday conversations — quick, casual, always up for a chat.</p>
+          <span class="tool-link">Open App <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <span class="tool-url">tiny.wondermayank.indevs.in</span>
+        </a>
+
+        <a class="tool-card clay-press" style="--accent:#E0467F;--tint:#FFE0ED" href="https://selfcare.wondermayank.in" target="_blank" rel="noopener">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19.4s-6.6-4.1-6.6-9.3a3.8 3.8 0 0 1 6.6-2.5 3.8 3.8 0 0 1 6.6 2.5c0 5.2-6.6 9.3-6.6 9.3Z"/></svg></span>
+          <h3>Self Care AI</h3>
+          <p>A gentle AI guide for calmer, more mindful self-care — for the days study isn't the priority.</p>
+          <span class="tool-link">Open App <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <span class="tool-url">selfcare.wondermayank.in</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <div class="wrap">
+      <h2>Got an idea for an AI tool?</h2>
+      <p>I build and ship these solo — reach out if there's something worth building next.</p>
+      <a href="https://wondermayank.github.io/contact" class="hero-cta clay-press" target="_blank" rel="noopener">
+        <span>Get in Touch</span>
+        <span class="arrow-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section parchment" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">FAQ</span>
+        <h2>Quick Answers</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q">Are all these AI tools free to use?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div class="faq-a">Yes — every tool listed here is free to use, the same way the rest of ThunderStudy and Wondermayank are. Some may have optional premium features down the line.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What's the difference between Study AI and Personal AI?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div class="faq-a">Study AI tools live under ThunderStudy and are built specifically for exam prep — CUET, SSC, Banking, UPSC. Personal AI tools live under Wondermayank and are built for everyday conversation and self-care, with no exam context.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Who builds and maintains these tools?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div class="faq-a">All six are built and maintained solo by Thunder (wondermayank), as part of a wider suite of 80+ free web projects spanning study tools, utilities, and creative sites.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do I need to sign up to use them?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div class="faq-a">Most tools work without an account. A few ThunderStudy tools may ask for a quick Google sign-in to sync progress across devices.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand">
+          <span class="brand-mark"><svg viewBox="0 0 24 24" fill="#fff"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+          Thunder AI Lab
+        </div>
+        <p style="font-size:13.5px;color:var(--muted);max-width:260px;line-height:1.5;">Every AI tool I've built, from exam prep to everyday self-care — built solo, shipped free.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Thunder</h5>
+        <a href="https://commercesehoga.github.io/" target="_blank" rel="noopener">ThunderStudy</a>
+        <a href="https://commercesehoga.github.io/dashboard" target="_blank" rel="noopener">CBT Mock Platform</a>
+        <a href="https://thunderstudy.github.io" target="_blank" rel="noopener">Free Study Material</a>
+        <a href="https://commercesehoga.github.io/help" target="_blank" rel="noopener">Help / Donate</a>
+      </div>
+      <div class="footer-col">
+        <h5>wondermayank</h5>
+        <a href="https://wondermayank.indevs.in" target="_blank" rel="noopener">Portfolio</a>
+        <a href="https://wondermayank.github.io/" target="_blank" rel="noopener">wondermayank.github.io</a>
+        <a href="https://wondermayank.github.io/mail" target="_blank" rel="noopener">Mail</a>
+        <a href="https://wondermayank.github.io/contact" target="_blank" rel="noopener">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <a href="https://wondermayank.github.io/terms" target="_blank" rel="noopener">Terms</a>
+        <a href="https://wondermayank.github.io/privacy" target="_blank" rel="noopener">Privacy</a>
+        <a href="https://wondermayank.github.io/disclaimer" target="_blank" rel="noopener">Disclaimer</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Thunder · by wondermayank</div>
+  </div>
+</footer>
+
+<script>
+  // Loader
+  window.addEventListener('DOMContentLoaded', function(){
+    setTimeout(function(){ document.getElementById('loader').classList.add('hide'); }, 200);
+  });
+  setTimeout(function(){ var l=document.getElementById('loader'); if(l) l.classList.add('hide'); }, 1500);
+
+  // Theme toggle
+  var themeBtn = document.getElementById('themeBtn');
+  var sunIcon = document.getElementById('themeIconSun');
+  var moonIcon = document.getElementById('themeIconMoon');
+  function syncIcons(){
+    var t = document.documentElement.getAttribute('data-theme');
+    sunIcon.style.display = t === 'dark' ? 'none' : 'block';
+    moonIcon.style.display = t === 'dark' ? 'block' : 'none';
+  }
+  syncIcons();
+  themeBtn.addEventListener('click', function(){
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('thunder-ai-theme', next); }catch(e){}
+    syncIcons();
+  });
+
+  // Mobile menu
+  var hamburgerBtn = document.getElementById('hamburgerBtn');
+  var mobileMenu = document.getElementById('mobileMenu');
+  hamburgerBtn.addEventListener('click', function(){
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ mobileMenu.classList.remove('open'); });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    item.querySelector('.faq-q').addEventListener('click', function(){
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+      if(!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>
