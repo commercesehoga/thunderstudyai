@@ -4,10 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/svg+xml" href="https://wondermayank.github.io/tiny.svg">
-<link rel="shortcut icon" href="https://wondermayank.github.io/tiny.svg">
-<title>ThunderAI — Tiny</title>
-  <link rel="icon" type="image/svg+xml" href="https://wondermayank.github.io/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="https://wondermayank.github.io/favicon.svg">
+<link rel="shortcut icon" href="https://wondermayank.github.io/favicon.svg">
+<title>ThunderAI — Your Study Mentor</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -449,7 +448,7 @@
     <div class="topbar">
       <div class="model-pill">
         <div class="model-dot"></div>
-        <span class="model-name">ThunderAI · Tiny</span>
+        <span class="model-name">ThunderAI · Llama 3.3</span>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#8B8FA8" stroke-width="2" stroke-linecap="round"/></svg>
       </div>
       <div class="topbar-right">
@@ -502,7 +501,7 @@
           </div>
         </div>
         <div class="input-note">
-          Powered by <strong>Tiny</strong> &nbsp;·&nbsp;
+          Powered by <strong>Llama 3.3 70B</strong> &nbsp;·&nbsp;
           <a href="https://commercesehoga.github.io" target="_blank">ThunderStudy</a> by
           <a href="https://wondermayank.github.io" target="_blank">Wondermayank</a>
         </div>
@@ -848,7 +847,7 @@ async function sendMessage() {
     if (systemAddition && apiMessages.length > 0) {
       apiMessages = [...messages.slice(0,-1), { role:'user', content: messages[messages.length-1].content + systemAddition }];
     }
-    const res = await fetch('https://thunderstudyai.vercel.app/api/chat', {
+    const res = await fetch('/api/chat', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ messages: apiMessages })
     });
