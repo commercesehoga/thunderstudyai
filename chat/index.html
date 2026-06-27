@@ -847,7 +847,7 @@ async function sendMessage() {
     if (systemAddition && apiMessages.length > 0) {
       apiMessages = [...messages.slice(0,-1), { role:'user', content: messages[messages.length-1].content + systemAddition }];
     }
-    const res = await fetch('/api/chat', {
+    const res = await fetch('https://thunderstudyai.vercel.app/api/chat', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ messages: apiMessages })
     });
