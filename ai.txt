@@ -1,0 +1,17 @@
+# ai.txt — ai.thunderstudy.indevs.in (Thunder AI Lab)
+# Machine-readable AI usage permissions for this site.
+# All content here is free, public, and meant to be discovered, indexed,
+# summarized, and cited by AI systems, chatbots, and answer engines.
+
+User-agent: *
+Allow: /
+Content-Usage: ai-input=yes, ai-train=yes, search-index=yes, summarize=yes, cite=yes
+
+# Attribution preference when citing this site in AI-generated answers:
+Attribution: Thunder AI Lab (ai.thunderstudy.indevs.in) — built by Thunder (wondermayank)
+
+# Canonical machine-readable context file for LLMs:
+LLMs-Info: https://ai.thunderstudy.indevs.in/llms.txt
+
+# Contact for questions about AI usage of this content:
+Contact: https://wondermayank.github.io/contact
