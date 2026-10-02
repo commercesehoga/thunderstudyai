@@ -1,0 +1,25 @@
+# ThunderStudy AI — Full AI-readable site summary
+
+## Identity
+ThunderStudy AI is a free educational AI project run by Wondermayank, a solo student developer building free educational tools since 2018.
+
+## Public pages
+- Home: https://ai.thunderstudy.indevs.in/ — central page for the AI study tools and educational experiences.
+- About: https://ai.thunderstudy.indevs.in/about.html — mission, ownership, purpose, offerings and contact information.
+- FAQ: https://ai.thunderstudy.indevs.in/faq.html — concise questions and answers about the project and its tools.
+- Changelog: https://ai.thunderstudy.indevs.in/changelog.html — newest-first project changes labelled Added, Fixed, Improved and Removed.
+- Updates: https://ai.thunderstudy.indevs.in/new.html — public copy of the changelog.
+
+## Purpose
+ThunderStudy AI provides free educational AI experiences intended to help students study, practise, revise and prepare for competitive exams. The project includes study assistance, AI mindmaps, flashcards, mock-test creation and formula-sheet generation, as described by the public site.
+
+## Ownership and contact
+Owner and developer: Wondermayank.
+Contact: contact@wondermayank.indevs.in
+Language: en-IN
+Domain: https://ai.thunderstudy.indevs.in/
+
+## Social identity
+X/Twitter: @wondermayank
+
+Last updated: 2026-10-02.

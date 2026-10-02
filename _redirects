@@ -1,0 +1,8 @@
+/index.html /
+/home /
+
+/about-us /about.html
+
+# Old URL templates:
+# /old-path /new-path 301
+# /legacy/* /replacement 301

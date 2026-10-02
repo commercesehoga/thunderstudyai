@@ -1,17 +1,8 @@
 /* TEAM */
-    Builder, Designer, Developer: Thunder (wondermayank)
-    Site: https://wondermayank.github.io/
-    Contact: https://wondermayank.github.io/contact
-    Location: Indore, India
-
-/* THANKS */
-    Every student using ThunderStudy for CBSE, CUET, SSC, Banking, JEE/NEET, CAT, UPSC, NDA, CLAT and CA prep.
+Owner: Wondermayank
+Contact: contact@wondermayank.indevs.in
 
 /* SITE */
-    Name: Thunder AI Lab
-    URL: https://ai.thunderstudy.indevs.in/
-    Description: Seven free AI tools across ThunderStudy (exam prep) and Wondermayank (everyday life)
-    Language: English
-    Doctype: HTML5
-    Components: Vanilla JS, CSS custom properties, JSON-LD structured data
-    Software: Built by hand, no framework
+Site: ThunderStudy AI
+Stack: HTML, CSS, JavaScript, Cloudflare Pages
+Last update: 2026-10-02
