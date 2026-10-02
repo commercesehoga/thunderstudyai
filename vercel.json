@@ -1,0 +1,20 @@
+{
+  "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/about.html", "destination": "/about", "permanent": true },
+    { "source": "/faq.html", "destination": "/faq", "permanent": true },
+    { "source": "/new.html", "destination": "/new", "permanent": true },
+    { "source": "/offline.html", "destination": "/offline", "permanent": true },
+    { "source": "/404.html", "destination": "/404", "permanent": true },
+    { "source": "/app.html", "destination": "/app", "permanent": true },
+    { "source": "/about-us", "destination": "/about", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/faq", "destination": "/faq.html" },
+    { "source": "/new", "destination": "/new.html" },
+    { "source": "/offline", "destination": "/offline.html" },
+    { "source": "/404", "destination": "/404.html" },
+    { "source": "/app", "destination": "/app.html" }
+  ]
+}
